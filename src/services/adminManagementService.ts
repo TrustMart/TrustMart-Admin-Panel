@@ -96,7 +96,7 @@ export class AdminManagementService {
             address: data.address || '',
             cnic: data.cnic || '',
             gender: data.gender || 'Male',
-            isApproved: data.isApproved || false,
+            isApproved: data.isApproved !== undefined ? data.isApproved : true,
             averageRating: data.averageRating || 0,
             totalReviews: data.totalReviews || 0,
             createdAt: data.createdAt?.toDate() || new Date(),
@@ -143,7 +143,7 @@ export class AdminManagementService {
           address: data.address || '',
           cnic: data.cnic || '',
           gender: data.gender || 'Male',
-          isApproved: data.isApproved || false,
+            isApproved: data.isApproved !== undefined ? data.isApproved : true,
           averageRating: data.averageRating || 0,
           totalReviews: data.totalReviews || 0,
           createdAt: data.createdAt?.toDate() || new Date(),
@@ -207,7 +207,7 @@ export class AdminManagementService {
             sellerId: data.sellerId || '',
             sellerName: data.sellerName || '',
             isActive: data.isActive !== false, // Default to true if undefined
-            isApproved: data.isApproved || false,
+            isApproved: data.isApproved !== undefined ? data.isApproved : true,
             averageRating: data.averageRating || 0,
             totalReviews: data.totalReviews || 0,
             createdAt: data.createdAt || new Date().toISOString(),
@@ -307,13 +307,13 @@ export class AdminManagementService {
         getDocs(collection(db, 'bids'))
       ]);
 
-      const users = usersSnapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
-        const data = doc.data();
-        return {
-          ...data,
-          isApproved: data.isApproved || false
-        };
-      });
+       const users = usersSnapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
+         const data = doc.data();
+         return {
+           ...data,
+           isApproved: data.isApproved !== undefined ? data.isApproved : true
+         };
+       });
       
       const products = productsSnapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => {
         const data = doc.data();
@@ -356,6 +356,7 @@ export class AdminManagementService {
       throw new Error('Failed to delete user');
     }
   }
+
 
   // Delete product
   static async deleteProduct(productId: string): Promise<void> {

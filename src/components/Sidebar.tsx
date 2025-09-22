@@ -105,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, currentPage, onNavigat
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <AdminPanelSettings sx={{ mr: 1, color: '#5D4037', fontSize: 28 }} />
             <Typography variant="h6" sx={{ color: '#5D4037', fontWeight: 700 }}>
-              TrustMart Admin
+              PakRiceMarket Admin
             </Typography>
           </Box>
           {isMobile && (
@@ -127,7 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, currentPage, onNavigat
               {adminUser?.name || 'Admin User'}
             </Typography>
             <Typography variant="caption" sx={{ color: '#8D6E63' }}>
-              {adminUser?.email || 'admin@trustmart.com'}
+              {adminUser?.email || 'admin@PakRiceMarket.com'}
             </Typography>
           </Box>
         </Box>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -98,10 +98,6 @@ const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({ data }) => {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    loadRealTimeData();
-  }, [loadRealTimeData]);
 
   // Helper functions to process real data
   const processUserGrowthData = (users: TrustMartUser[]) => {
@@ -209,6 +205,10 @@ const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({ data }) => {
     const acceptedBids = bids.filter(bid => bid.isAccepted);
     return Math.round(acceptedBids.reduce((sum, bid) => sum + bid.amount * 0.1, 0)); // 10% commission
   };
+
+  useEffect(() => {
+    loadRealTimeData();
+  }, [loadRealTimeData]);
 
   if (loading) {
     return (

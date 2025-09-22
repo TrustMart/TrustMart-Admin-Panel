@@ -8,7 +8,6 @@ import {
   Avatar,
   Chip,
   Paper,
-  useTheme,
   IconButton,
   Fade,
   Slide,
@@ -206,7 +205,7 @@ const LandingScreen: React.FC = () => {
                       letterSpacing: '-0.02em',
                     }}
                   >
-                    TrustMart
+                    PakRiceMarket
                     <Typography
                       component="span"
                       sx={{
@@ -702,7 +701,7 @@ const LandingScreen: React.FC = () => {
       >
         <Container maxWidth="lg">
           <Typography variant="body1" sx={{ opacity: 0.9, mb: 2 }}>
-            © 2024 TrustMart Rice Marketplace Admin Panel. All rights reserved.
+            © 2024 PakRiceMarket Rice Marketplace Admin Panel. All rights reserved.
           </Typography>
           <Typography variant="body2" sx={{ opacity: 0.7 }}>
             Built with ❤️ for the agricultural community

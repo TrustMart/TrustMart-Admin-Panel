@@ -59,7 +59,7 @@ const AdminDashboard: React.FC = () => {
       {/* Quick Stats */}
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#5D4037' }}>
-          TrustMart Marketplace Overview
+          PakRiceMarket Marketplace Overview
         </Typography>
         <Box sx={{ 
           display: 'grid', 

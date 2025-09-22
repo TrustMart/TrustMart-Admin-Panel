@@ -213,7 +213,7 @@ const SignInPage: React.FC = () => {
                   Welcome Back
                 </Typography>
                 <Typography variant="body1" sx={{ color: '#8D6E63' }}>
-                  Sign in to your TrustMart Admin Panel
+                  Sign in to your PakRiceMarket Admin Panel
                 </Typography>
               </Box>
 

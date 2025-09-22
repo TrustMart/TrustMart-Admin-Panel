@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import Sidebar from './Sidebar';
 import AnalyticsCharts from './AnalyticsCharts';
+import UserManagement from './UserManagement';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -50,16 +51,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           case '/admin':
             return <AnalyticsCharts />;
       case '/admin/users':
-        return (
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4" sx={{ color: '#5D4037', fontWeight: 700, mb: 3 }}>
-              User Management
-            </Typography>
-            <Typography variant="body1" sx={{ color: '#8D6E63' }}>
-              User management features coming soon...
-            </Typography>
-          </Box>
-        );
+        return <UserManagement />;
       case '/admin/products':
         return (
           <Box sx={{ p: 3 }}>
@@ -191,7 +183,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 display: { xs: 'none', sm: 'block' },
               }}
             >
-              TrustMart Admin Panel
+              PakRiceMarket Admin Panel
             </Typography>
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

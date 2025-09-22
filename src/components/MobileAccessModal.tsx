@@ -154,7 +154,7 @@ const MobileAccessModal: React.FC<MobileAccessModalProps> = ({ open, onClose }) 
               Access on Mobile
             </Typography>
             <Typography variant="body1" sx={{ color: '#8D6E63', maxWidth: '400px', mx: 'auto' }}>
-              Get the full TrustMart experience on your mobile device with our native app
+              Get the full PakRiceMarket experience on your mobile device with our native app
             </Typography>
           </Box>
 
