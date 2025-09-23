@@ -190,7 +190,7 @@ const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({ data }) => {
         return bidDate >= monthStart && bidDate <= monthEnd && bid.isAccepted;
       });
       
-      const revenue = monthProducts.reduce((sum, product) => sum + product.price, 0);
+      const revenue = monthProducts.reduce((sum, product) => sum + parseFloat(product.price.toString()), 0);
       const profit = monthBids.reduce((sum, bid) => sum + bid.amount * 0.1, 0); // 10% commission
       
       return {

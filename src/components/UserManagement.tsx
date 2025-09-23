@@ -40,6 +40,9 @@ import {
   Visibility,
   Edit,
   Delete,
+  Store,
+  Business,
+  SupervisorAccount,
 } from '@mui/icons-material';
 import { AdminManagementService, TrustMartUser } from '../services/adminManagementService';
 
@@ -174,10 +177,31 @@ const UserManagement: React.FC<UserManagementProps> = () => {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin': return '#E57373';
-      case 'shop': return '#64B5F6';
-      case 'user': return '#8BC34A';
-      default: return '#8D6E63';
+      case 'user': return '#8BC34A';      // Green for regular users
+      case 'shop': return '#64B5F6';     // Blue for shop owners
+      case 'company': return '#FF9800';  // Orange for companies
+      case 'commissioner': return '#9C27B0'; // Purple for commissioners
+      default: return '#8D6E63';         // Brown for unknown roles
+    }
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'user': return <Person fontSize="small" />;
+      case 'shop': return <Store fontSize="small" />;
+      case 'company': return <Business fontSize="small" />;
+      case 'commissioner': return <SupervisorAccount fontSize="small" />;
+      default: return <Person fontSize="small" />;
+    }
+  };
+
+  const getRoleDisplayName = (role: string) => {
+    switch (role) {
+      case 'user': return 'User';
+      case 'shop': return 'Shop Owner';
+      case 'company': return 'Company';
+      case 'commissioner': return 'Commissioner';
+      default: return role.charAt(0).toUpperCase() + role.slice(1);
     }
   };
 
@@ -237,7 +261,8 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               <MenuItem value="all">All Roles</MenuItem>
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="shop">Shop</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="company">Company</MenuItem>
+              <MenuItem value="commissioner">Commissioner</MenuItem>
             </TextField>
 
             <TextField
@@ -306,7 +331,8 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={user.role}
+                      icon={getRoleIcon(user.role)}
+                      label={getRoleDisplayName(user.role)}
                       size="small"
                       sx={{
                         bgcolor: getRoleColor(user.role),
@@ -438,12 +464,6 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           </ListItemIcon>
           <ListItemText>View Details</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => handleActionClick('edit')}>
-          <ListItemIcon>
-            <Edit />
-          </ListItemIcon>
-          <ListItemText>Edit User</ListItemText>
-        </MenuItem>
         <MenuItem onClick={() => handleActionClick('delete')} sx={{ color: '#E57373' }}>
           <ListItemIcon>
             <Delete sx={{ color: '#E57373' }} />
@@ -463,7 +483,6 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           {actionDialog.type === 'view' && 'User Details'}
           {actionDialog.type === 'block' && 'Block User'}
           {actionDialog.type === 'unblock' && 'Unblock User'}
-          {actionDialog.type === 'edit' && 'Edit User'}
           {actionDialog.type === 'delete' && 'Delete User'}
         </DialogTitle>
         <DialogContent>
@@ -499,7 +518,8 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                         Role
                       </Typography>
                       <Chip
-                        label={actionDialog.user.role}
+                        icon={getRoleIcon(actionDialog.user.role)}
+                        label={getRoleDisplayName(actionDialog.user.role)}
                         size="small"
                         sx={{
                           bgcolor: getRoleColor(actionDialog.user.role),

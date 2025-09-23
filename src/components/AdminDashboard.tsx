@@ -4,7 +4,14 @@ import {
   Typography,
   Card,
   CardContent,
+  Chip,
 } from '@mui/material';
+import {
+  Person,
+  Store,
+  Business,
+  SupervisorAccount,
+} from '@mui/icons-material';
 import { requireAuth } from '../utils/authUtils';
 import { AdminManagementService } from '../services/adminManagementService';
 import DashboardLayout from './DashboardLayout';
@@ -17,7 +24,13 @@ const AdminDashboard: React.FC = () => {
     totalBids: 0,
     pendingApprovals: 0,
     activeUsers: 0,
-    activeProducts: 0
+    activeProducts: 0,
+    roleStats: {
+      users: 0,
+      shops: 0,
+      companies: 0,
+      commissioners: 0,
+    }
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -131,6 +144,94 @@ const AdminDashboard: React.FC = () => {
               </Typography>
               <Typography variant="body1" sx={{ color: '#8D6E63' }}>
                 Pending Approvals
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
+      </Box>
+
+      {/* Role-based Statistics */}
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: '#5D4037' }}>
+          User Roles Breakdown
+        </Typography>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+          gap: 3
+        }}>
+          <Card sx={{ 
+            p: 3, 
+            textAlign: 'center', 
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(93, 64, 55, 0.08)',
+            border: '1px solid rgba(139, 195, 74, 0.2)',
+            background: 'linear-gradient(135deg, rgba(139, 195, 74, 0.1) 0%, rgba(139, 195, 74, 0.05) 100%)',
+          }}>
+            <CardContent sx={{ p: 0 }}>
+              <Person sx={{ fontSize: 40, color: '#8BC34A', mb: 1 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#8BC34A', mb: 1 }}>
+                {isLoading ? '...' : dashboardStats.roleStats.users.toLocaleString()}
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#8D6E63' }}>
+                Regular Users
+              </Typography>
+            </CardContent>
+          </Card>
+          
+          <Card sx={{ 
+            p: 3, 
+            textAlign: 'center', 
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(93, 64, 55, 0.08)',
+            border: '1px solid rgba(100, 181, 246, 0.2)',
+            background: 'linear-gradient(135deg, rgba(100, 181, 246, 0.1) 0%, rgba(100, 181, 246, 0.05) 100%)',
+          }}>
+            <CardContent sx={{ p: 0 }}>
+              <Store sx={{ fontSize: 40, color: '#64B5F6', mb: 1 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#64B5F6', mb: 1 }}>
+                {isLoading ? '...' : dashboardStats.roleStats.shops.toLocaleString()}
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#8D6E63' }}>
+                Shop Owners
+              </Typography>
+            </CardContent>
+          </Card>
+          
+          <Card sx={{ 
+            p: 3, 
+            textAlign: 'center', 
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(93, 64, 55, 0.08)',
+            border: '1px solid rgba(255, 152, 0, 0.2)',
+            background: 'linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%)',
+          }}>
+            <CardContent sx={{ p: 0 }}>
+              <Business sx={{ fontSize: 40, color: '#FF9800', mb: 1 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#FF9800', mb: 1 }}>
+                {isLoading ? '...' : dashboardStats.roleStats.companies.toLocaleString()}
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#8D6E63' }}>
+                Companies
+              </Typography>
+            </CardContent>
+          </Card>
+          
+          <Card sx={{ 
+            p: 3, 
+            textAlign: 'center', 
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(93, 64, 55, 0.08)',
+            border: '1px solid rgba(156, 39, 176, 0.2)',
+            background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(156, 39, 176, 0.05) 100%)',
+          }}>
+            <CardContent sx={{ p: 0 }}>
+              <SupervisorAccount sx={{ fontSize: 40, color: '#9C27B0', mb: 1 }} />
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#9C27B0', mb: 1 }}>
+                {isLoading ? '...' : dashboardStats.roleStats.commissioners.toLocaleString()}
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#8D6E63' }}>
+                Commissioners
               </Typography>
             </CardContent>
           </Card>

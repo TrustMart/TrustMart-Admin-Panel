@@ -9,6 +9,7 @@ import {
   orderBy,
   limit,
   startAfter,
+  getDoc,
   QueryDocumentSnapshot,
   DocumentData
 } from 'firebase/firestore';
@@ -18,12 +19,12 @@ export interface TrustMartUser {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'shop' | 'admin';
-  profileImage?: string;
-  phone?: string;
-  address?: string;
-  cnic?: string;
-  gender?: 'Male' | 'Female';
+  role: 'company' | 'shop' | 'commissioner' | 'user';
+  profileImage: string;
+  phone: string;
+  address: string;
+  cnic: string;
+  gender: 'Male' | 'Female';
   isApproved: boolean;
   averageRating: number;
   totalReviews: number;
@@ -33,17 +34,24 @@ export interface TrustMartUser {
 
 export interface TrustMartProduct {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  price: number;
-  category: string;
+  price: string;
   images: string[];
-  sellerId: string;
-  sellerName: string;
-  isActive: boolean;
-  isApproved: boolean;
-  averageRating: number;
-  totalReviews: number;
+  video?: string | null;
+  category: string;
+  status: 'Active' | 'Sold' | 'Inactive' | 'Blocked';
+  userId: string;
+  userName: string;
+  remainingBags: number;
+  weightPerBag: string;
+  dateAdded: string;
+  bids: number;
+  averageRating?: number;
+  totalReviews?: number;
+  ratingBreakdown?: {
+    [key: number]: number; // rating -> count
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -199,20 +207,28 @@ export class AdminManagementService {
           const data = doc.data();
           products.push({
             id: doc.id,
-            title: data.title || '',
+            name: data.name || '',
             description: data.description || '',
-            price: data.price || 0,
-            category: data.category || '',
+            price: data.price || '',
             images: data.images || [],
-            sellerId: data.sellerId || '',
-            sellerName: data.sellerName || '',
-            isActive: data.isActive !== false, // Default to true if undefined
-            isApproved: data.isApproved !== undefined ? data.isApproved : true,
+            video: data.video || null,
+            category: data.category || '',
+            status: data.status || 'Active',
+            userId: data.userId || '',
+            userName: data.userName || '',
+            remainingBags: data.remainingBags || 0,
+            weightPerBag: data.weightPerBag || '',
+            dateAdded: data.dateAdded || '',
+            bids: data.bids || 0,
             averageRating: data.averageRating || 0,
             totalReviews: data.totalReviews || 0,
+            ratingBreakdown: data.ratingBreakdown || {},
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: data.updatedAt || new Date().toISOString(),
           });
+          
+          // Debug logging for product status
+          console.log(`Product ${doc.id}: status="${data.status}", mapped status="${data.status || 'Active'}"`);
         } else {
           hasMore = true;
         }
@@ -244,17 +260,52 @@ export class AdminManagementService {
     }
   }
 
-  // Activate/Deactivate product
-  static async updateProductStatus(productId: string, isActive: boolean): Promise<void> {
+  // Block/Unblock product (admin action)
+  static async updateProductStatus(productId: string, isBlocked: boolean): Promise<void> {
     try {
       const productRef = doc(db, 'products', productId);
+      
+      // Get current product to determine new status
+      const productDoc = await getDoc(productRef);
+      if (!productDoc.exists()) {
+        throw new Error('Product not found');
+      }
+      
+      const currentData = productDoc.data();
+      const currentStatus = currentData.status || 'Active';
+      
+      let newStatus: string;
+      if (isBlocked) {
+        // Block the product - set to Blocked regardless of current status (Active/Inactive)
+        newStatus = 'Blocked';
+      } else {
+        // Unblock the product - restore to Active
+        newStatus = 'Active';
+      }
+      
       await updateDoc(productRef, {
-        isActive,
+        status: newStatus,
         updatedAt: new Date().toISOString()
       });
+      
+      console.log(`✅ Product ${productId} status updated in Firebase: ${currentStatus} → ${newStatus}`);
     } catch (error) {
       console.error('Error updating product status:', error);
       throw new Error('Failed to update product status');
+    }
+  }
+
+  // Update product category
+  static async updateProductCategory(productId: string, category: string): Promise<void> {
+    try {
+      const productRef = doc(db, 'products', productId);
+      await updateDoc(productRef, {
+        category,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error updating product category:', error);
+      throw new Error('Failed to update product category');
     }
   }
 
@@ -299,6 +350,12 @@ export class AdminManagementService {
     pendingApprovals: number;
     activeUsers: number;
     activeProducts: number;
+    roleStats: {
+      users: number;
+      shops: number;
+      companies: number;
+      commissioners: number;
+    };
   }> {
     try {
       const [usersSnapshot, productsSnapshot, bidsSnapshot] = await Promise.all([
@@ -311,6 +368,8 @@ export class AdminManagementService {
          const data = doc.data();
          return {
            ...data,
+           id: doc.id,
+           role: data.role || 'user',
            isApproved: data.isApproved !== undefined ? data.isApproved : true
          };
        });
@@ -319,7 +378,7 @@ export class AdminManagementService {
         const data = doc.data();
         return {
           ...data,
-          isActive: data.isActive !== false, // Default to true if undefined
+          isActive: data.status === 'Active' || data.isActive !== false, // Use status field from TrustMart
           isApproved: data.isApproved || false
         };
       });
@@ -332,13 +391,22 @@ export class AdminManagementService {
       
       const activeProducts = products.filter(product => product.isActive).length;
 
+      // Role-based statistics
+      const roleStats = {
+        users: users.filter(user => user.role === 'user').length,
+        shops: users.filter(user => user.role === 'shop').length,
+        companies: users.filter(user => user.role === 'company').length,
+        commissioners: users.filter(user => user.role === 'commissioner').length,
+      };
+
       return {
         totalUsers,
         totalProducts,
         totalBids,
         pendingApprovals,
         activeUsers,
-        activeProducts
+        activeProducts,
+        roleStats
       };
     } catch (error) {
       console.error('Error getting dashboard stats:', error);
