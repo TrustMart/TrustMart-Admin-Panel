@@ -18,6 +18,7 @@ import Sidebar from './Sidebar';
 import AnalyticsCharts from './AnalyticsCharts';
 import UserManagement from './UserManagement';
 import ProductManagement from './ProductManagement';
+import ShopManagement from './ShopManagement';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -56,16 +57,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       case '/admin/products':
         return <ProductManagement />;
       case '/admin/shops':
-        return (
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4" sx={{ color: '#5D4037', fontWeight: 700, mb: 3 }}>
-              Shop Management
-            </Typography>
-            <Typography variant="body1" sx={{ color: '#8D6E63' }}>
-              Shop management features coming soon...
-            </Typography>
-          </Box>
-        );
+        return <ShopManagement />;
       case '/admin/bids':
         return (
           <Box sx={{ p: 3 }}>

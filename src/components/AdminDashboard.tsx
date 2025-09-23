@@ -25,6 +25,7 @@ const AdminDashboard: React.FC = () => {
     pendingApprovals: 0,
     activeUsers: 0,
     activeProducts: 0,
+    featuredShops: 0,
     roleStats: {
       users: 0,
       shops: 0,
@@ -144,6 +145,23 @@ const AdminDashboard: React.FC = () => {
               </Typography>
               <Typography variant="body1" sx={{ color: '#8D6E63' }}>
                 Pending Approvals
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ 
+            p: 3, 
+            textAlign: 'center', 
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(93, 64, 55, 0.08)',
+            border: '1px solid rgba(255, 215, 0, 0.2)',
+            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%)',
+          }}>
+            <CardContent sx={{ p: 0 }}>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#FFD700', mb: 1 }}>
+                {isLoading ? '...' : dashboardStats.featuredShops.toLocaleString()}
+              </Typography>
+              <Typography variant="body1" sx={{ color: '#8D6E63' }}>
+                Featured Shops
               </Typography>
             </CardContent>
           </Card>

@@ -26,6 +26,7 @@ export interface TrustMartUser {
   cnic: string;
   gender: 'Male' | 'Female';
   isApproved: boolean;
+  isFeatured: boolean;
   averageRating: number;
   totalReviews: number;
   createdAt: Date;
@@ -105,10 +106,11 @@ export class AdminManagementService {
             cnic: data.cnic || '',
             gender: data.gender || 'Male',
             isApproved: data.isApproved !== undefined ? data.isApproved : true,
+            isFeatured: data.isFeatured !== undefined ? data.isFeatured : false,
             averageRating: data.averageRating || 0,
             totalReviews: data.totalReviews || 0,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
+            createdAt: data.createdAt?.toDate?.() || new Date(),
+            updatedAt: data.updatedAt?.toDate?.() || new Date(),
           });
         } else {
           hasMore = true;
@@ -152,10 +154,11 @@ export class AdminManagementService {
           cnic: data.cnic || '',
           gender: data.gender || 'Male',
             isApproved: data.isApproved !== undefined ? data.isApproved : true,
-          averageRating: data.averageRating || 0,
+            isFeatured: data.isFeatured !== undefined ? data.isFeatured : false,
+            averageRating: data.averageRating || 0,
           totalReviews: data.totalReviews || 0,
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
+          createdAt: data.createdAt?.toDate?.() || new Date(),
+          updatedAt: data.updatedAt?.toDate?.() || new Date(),
         });
       });
 
@@ -309,6 +312,105 @@ export class AdminManagementService {
     }
   }
 
+  // Update shop featured status
+  static async updateShopFeaturedStatus(userId: string, isFeatured: boolean): Promise<void> {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        isFeatured,
+        updatedAt: new Date().toISOString()
+      });
+      console.log(`✅ Shop ${userId} featured status updated: ${isFeatured}`);
+    } catch (error) {
+      console.error('Error updating shop featured status:', error);
+      throw new Error('Failed to update shop featured status');
+    }
+  }
+
+  // Get featured shops only
+  static async getFeaturedShops(): Promise<TrustMartUser[]> {
+    try {
+      const q = query(
+        collection(db, 'users'),
+        where('isFeatured', '==', true)
+      );
+      
+      const snapshot = await getDocs(q);
+      const shops: TrustMartUser[] = [];
+      
+      snapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
+        const data = doc.data();
+        shops.push({
+          id: doc.id,
+          email: data.email || '',
+          name: data.name || '',
+          role: data.role || 'user',
+          profileImage: data.profileImage || '',
+          phone: data.phone || '',
+          address: data.address || '',
+          cnic: data.cnic || '',
+          gender: data.gender || 'Male',
+          isApproved: data.isApproved !== undefined ? data.isApproved : true,
+          isFeatured: data.isFeatured !== undefined ? data.isFeatured : false,
+          averageRating: data.averageRating || 0,
+          totalReviews: data.totalReviews || 0,
+          createdAt: data.createdAt?.toDate?.() || new Date(),
+          updatedAt: data.updatedAt?.toDate?.() || new Date(),
+        });
+      });
+      
+      // Sort by createdAt in JavaScript
+      shops.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      
+      return shops;
+    } catch (error) {
+      console.error('Error getting featured shops:', error);
+      throw new Error('Failed to get featured shops');
+    }
+  }
+
+  // Get all virtual shops (all users since every user is a virtual shop)
+  static async getShops(limitCount: number = 50): Promise<{ shops: TrustMartUser[]; hasMore: boolean }> {
+    try {
+      const q = query(
+        collection(db, 'users'),
+        limit(limitCount)
+      );
+
+      const snapshot = await getDocs(q);
+      const shops: TrustMartUser[] = [];
+
+      snapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
+        const data = doc.data();
+        shops.push({
+          id: doc.id,
+          email: data.email || '',
+          name: data.name || '',
+          role: data.role || 'user',
+          profileImage: data.profileImage || '',
+          phone: data.phone || '',
+          address: data.address || '',
+          cnic: data.cnic || '',
+          gender: data.gender || 'Male',
+          isApproved: data.isApproved !== undefined ? data.isApproved : true,
+          isFeatured: data.isFeatured !== undefined ? data.isFeatured : false,
+          averageRating: data.averageRating || 0,
+          totalReviews: data.totalReviews || 0,
+          createdAt: data.createdAt?.toDate?.() || new Date(),
+          updatedAt: data.updatedAt?.toDate?.() || new Date(),
+        });
+      });
+
+      // Sort by createdAt in JavaScript instead of Firebase query
+      shops.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      return { shops, hasMore: snapshot.size === limitCount };
+    } catch (error) {
+      console.error('Error getting shops:', error);
+      throw new Error('Failed to get shops');
+    }
+  }
+
   // Get all bids
   static async getBids(): Promise<TrustMartBid[]> {
     try {
@@ -330,8 +432,8 @@ export class AdminManagementService {
           amount: data.amount || 0,
           message: data.message || '',
           isAccepted: data.isAccepted || false,
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
+          createdAt: data.createdAt?.toDate?.() || new Date(),
+          updatedAt: data.updatedAt?.toDate?.() || new Date(),
         });
       });
 
@@ -350,6 +452,7 @@ export class AdminManagementService {
     pendingApprovals: number;
     activeUsers: number;
     activeProducts: number;
+    featuredShops: number;
     roleStats: {
       users: number;
       shops: number;
@@ -370,7 +473,8 @@ export class AdminManagementService {
            ...data,
            id: doc.id,
            role: data.role || 'user',
-           isApproved: data.isApproved !== undefined ? data.isApproved : true
+           isApproved: data.isApproved !== undefined ? data.isApproved : true,
+           isFeatured: data.isFeatured !== undefined ? data.isFeatured : false
          };
        });
       
@@ -390,6 +494,7 @@ export class AdminManagementService {
       const activeUsers = users.filter(user => user.isApproved).length;
       
       const activeProducts = products.filter(product => product.isActive).length;
+      const featuredShops = users.filter(user => user.isFeatured).length;
 
       // Role-based statistics
       const roleStats = {
@@ -406,6 +511,7 @@ export class AdminManagementService {
         pendingApprovals,
         activeUsers,
         activeProducts,
+        featuredShops,
         roleStats
       };
     } catch (error) {

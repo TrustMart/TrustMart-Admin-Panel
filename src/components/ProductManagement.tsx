@@ -460,7 +460,8 @@ const ProductManagement: React.FC<ProductManagementProps> = () => {
               <MenuItem value="all">All Roles</MenuItem>
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="shop">Shop</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="company">Company</MenuItem>
+              <MenuItem value="commissioner">Commissioner</MenuItem>
             </TextField>
 
             <TextField
