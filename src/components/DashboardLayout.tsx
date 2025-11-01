@@ -19,6 +19,7 @@ import AnalyticsCharts from './AnalyticsCharts';
 import UserManagement from './UserManagement';
 import ProductManagement from './ProductManagement';
 import ShopManagement from './ShopManagement';
+import MandiListManagement from './MandiListManagement';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -58,6 +59,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         return <ProductManagement />;
       case '/admin/shops':
         return <ShopManagement />;
+      case '/admin/mandi-generator':
+        return <MandiListManagement />;
       case '/admin/bids':
         return (
           <Box sx={{ p: 3 }}>

@@ -13,6 +13,7 @@ import {
   IconButton,
   Avatar,
   Drawer,
+  Chip,
 } from '@mui/material';
 import {
   Dashboard,
@@ -27,6 +28,7 @@ import {
   Settings,
   Logout,
   Menu as MenuIcon,
+  Description,
 } from '@mui/icons-material';
 import { getCurrentAdmin, logoutAdmin } from '../utils/authUtils';
 
@@ -66,6 +68,12 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, currentPage, onNavigat
       label: 'Shop Management',
       icon: <Storefront />,
       path: '/admin/shops',
+    },
+    {
+      id: 'mandi-generator',
+      label: 'Mandi List Management',
+      icon: <Description />,
+      path: '/admin/mandi-generator',
     },
     {
       id: 'bids',
@@ -163,14 +171,35 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose, currentPage, onNavigat
                 {item.icon}
               </ListItemIcon>
               <ListItemText
-                primary={item.label}
-                sx={{
-                  '& .MuiListItemText-primary': {
-                    color: currentPage === item.id ? '#5D4037' : '#8D6E63',
-                    fontWeight: currentPage === item.id ? 600 : 400,
-                    fontSize: '0.9rem',
-                  },
-                }}
+                primary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography
+                      sx={{
+                        color: currentPage === item.id ? '#5D4037' : '#8D6E63',
+                        fontWeight: currentPage === item.id ? 600 : 400,
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                    {(item as any).badge && (
+                      <Chip
+                        label={(item as any).badge}
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: '0.65rem',
+                          fontWeight: 600,
+                          bgcolor: '#8BC34A',
+                          color: 'white',
+                          '& .MuiChip-label': {
+                            px: 1,
+                          },
+                        }}
+                      />
+                    )}
+                  </Box>
+                }
               />
             </ListItemButton>
           </ListItem>
